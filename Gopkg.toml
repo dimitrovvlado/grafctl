@@ -1,0 +1,12 @@
+required=[
+  "github.com/spf13/cobra",
+  "github.com/sirupsen/logrus",
+]
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[prune]
+  go-tests = true
+  unused-packages = true
