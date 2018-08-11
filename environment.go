@@ -12,7 +12,7 @@ type EnvSettings struct {
 
 //Init environment
 func (s *EnvSettings) Init() {
-	s.GrafanaHost = "https://vcpp1-dev.us-west-2.csp.vmware.com"
-	s.GrafanaUsername = "usagemeter"
-	s.GrafanaPassword = "axDaVUat0oyeeJx5AIDVfFZTxIwR"
+	s.GrafanaHost = ""
+	s.GrafanaUsername = ""
+	s.GrafanaPassword = ""
 }
