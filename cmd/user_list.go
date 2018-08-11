@@ -12,8 +12,9 @@ import (
 )
 
 type usersCmd struct {
-	client *grafana.Client
-	output string
+	client     *grafana.Client
+	output     string
+	currentOrg bool
 }
 
 func newUsersCommand(client *grafana.Client) *cobra.Command {
@@ -30,12 +31,15 @@ func newUsersCommand(client *grafana.Client) *cobra.Command {
 			return i.run()
 		},
 	}
+
+	getUsersCmd.PersistentFlags().BoolVarP(&i.currentOrg, "current-org", "c", false, "Display users in current organization only")
+
 	return getUsersCmd
 }
 
 // run creates a merge request
 func (i *usersCmd) run() error {
-	users, err := i.client.ListUsers()
+	users, err := i.client.ListUsers(&grafana.ListUserOptions{CurrentOrg: i.currentOrg})
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -47,7 +51,11 @@ func (i *usersCmd) run() error {
 		table.MaxColWidth = colWidth
 		table.AddRow("ID", "NAME", "LOGIN", "EMAIL")
 		for _, lr := range users {
-			table.AddRow(lr.ID, lr.Name, lr.Login, lr.Email)
+			userID := lr.ID
+			if userID == 0 {
+				userID = lr.UserID
+			}
+			table.AddRow(userID, lr.Name, lr.Login, lr.Email)
 		}
 		return fmt.Sprintf("%s%s", table.String(), "\n")
 	}

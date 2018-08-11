@@ -3,12 +3,19 @@ package grafana
 //User defines the data struct for a User object
 type User struct {
 	ID          int    `json:"id,omitempty"`
+	UserID      int    `json:"userId,omitempty"`
+	OrgID       int    `json:"orgId,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Login       string `json:"login,omitempty"`
 	Email       string `json:"email,omitempty"`
 	AvatarURL   string `json:"avatarUrl,omitempty"`
 	IsAdmin     bool   `json:"isAdmin,omitempty"`
 	LastSeenAge string `json:"lastSeenAtAge,omitempty"`
+}
+
+//ListUserOptions options for querying users
+type ListUserOptions struct {
+	CurrentOrg bool
 }
 
 //Org defines the data struct for an Organization object

@@ -23,7 +23,7 @@ func newOrgCommand(client *grafana.Client) *cobra.Command {
 	getOrgsCmd := &cobra.Command{
 		Use:     "organinizations",
 		Aliases: []string{"organisations", "orgs", "org"},
-		Short:   "Display one or many organizations",
+		Short:   "Display the current organization.",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			get.output = cmd.Flag("output").Value.String()

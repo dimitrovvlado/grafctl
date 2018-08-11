@@ -11,6 +11,9 @@ const (
 	UsersEndpoint = "/api/users"
 
 	// OrgsEndpoint is the API endoint for organizations.
+	OrgsUsersEndpoint = "/api/org/users"
+
+	// OrgsEndpoint is the API endoint for organizations.
 	OrgsEndpoint = "/api/org"
 
 	// DatasourcesEndpoint is the API endoint for datasources.

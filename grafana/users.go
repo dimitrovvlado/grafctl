@@ -6,10 +6,16 @@ import (
 )
 
 // ListUsers returns a list of users.
-func (c *Client) ListUsers() ([]User, error) {
+func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
+	var endpoint string
+	if opt.CurrentOrg {
+		endpoint = OrgsUsersEndpoint
+	} else {
+		endpoint = UsersEndpoint
+	}
 	resp, err := c.doRequest(
 		http.MethodGet,
-		UsersEndpoint,
+		endpoint,
 		nil,
 	)
 	if err != nil {
