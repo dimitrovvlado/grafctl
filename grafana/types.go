@@ -11,11 +11,19 @@ type User struct {
 	LastSeenAge string `json:"lastSeenAtAge,omitempty"`
 }
 
-// "id": 1,
-// "name": "",
-// "login": "usagemeter",
-// "email": "usagemeter@localhost",
-// "avatarUrl": "/avatar/78e9bc2c2b0992a40a058aafe115b065",
-// "isAdmin": true,
-// "lastSeenAt": "2018-08-08T09:24:24Z",
-// "lastSeenAtAge": "< 1m"
+//Org defines the data struct for an Organization object
+type Org struct {
+	ID      int     `json:"id,omitempty"`
+	Name    string  `json:"name,omitempty"`
+	Address Address `json:"address,omitempty"`
+}
+
+//Address defines the data struct for an Address object
+type Address struct {
+	Address1 string `json:"address1,omitempty"`
+	Address2 string `json:"address2,omitempty"`
+	City     string `json:"city,omitempty"`
+	ZipCode  string `json:"zipCode,omitempty"`
+	State    string `json:"state,omitempty"`
+	Country  string `json:"country,omitempty"`
+}

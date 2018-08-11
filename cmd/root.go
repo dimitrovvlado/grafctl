@@ -10,6 +10,7 @@ import (
 
 type rootCmd struct {
 	Verbous bool
+	Output  string
 }
 
 //NewRootCmd creates the root command
@@ -29,6 +30,7 @@ func NewRootCmd(client *grafana.Client) *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&i.Verbous, "verbose", "v", false, "Verbose output")
+	rootCmd.PersistentFlags().StringVarP(&i.Output, "output", "o", "", "The specified format (|json)")
 
 	rootCmd.AddCommand(
 		newVersionCmd(),

@@ -11,31 +11,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type usersCmd struct {
+type orgCmd struct {
 	client *grafana.Client
 	output string
 }
 
-func newUsersCommand(client *grafana.Client) *cobra.Command {
-	i := &usersCmd{
+func newOrgCommand(client *grafana.Client) *cobra.Command {
+	get := &orgCmd{
 		client: client,
 	}
-	getUsersCmd := &cobra.Command{
-		Use:     "users",
-		Aliases: []string{"user"},
-		Short:   "Display one or many users",
+	getOrgsCmd := &cobra.Command{
+		Use:     "organinizations",
+		Aliases: []string{"organisations", "orgs", "org"},
+		Short:   "Display one or many organizations",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			i.output = cmd.Flag("output").Value.String()
-			return i.run()
+			get.output = cmd.Flag("output").Value.String()
+			return get.run()
 		},
 	}
-	return getUsersCmd
+	return getOrgsCmd
 }
 
 // run creates a merge request
-func (i *usersCmd) run() error {
-	users, err := i.client.ListUsers()
+func (i *orgCmd) run() error {
+	orgs, err := i.client.ListOrgs()
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -45,14 +45,14 @@ func (i *usersCmd) run() error {
 	formatter := func() string {
 		table := uitable.New()
 		table.MaxColWidth = colWidth
-		table.AddRow("ID", "NAME", "LOGIN", "EMAIL")
-		for _, lr := range users {
-			table.AddRow(lr.ID, lr.Name, lr.Login, lr.Email)
+		table.AddRow("ID", "NAME", "CITY", "STATE", "COUNTRY")
+		for _, lr := range orgs {
+			table.AddRow(lr.ID, lr.Name, lr.Address.City, lr.Address.State, lr.Address.Country)
 		}
 		return fmt.Sprintf("%s%s", table.String(), "\n")
 	}
 
-	result, err := formatResult(i.output, users, formatter)
+	result, err := formatResult(i.output, orgs, formatter)
 	if err != nil {
 		logrus.Fatal(err)
 	}

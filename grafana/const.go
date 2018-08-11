@@ -7,6 +7,9 @@ const (
 	//AuthorizationTypeBasic value
 	AuthorizationTypeBasic = "Basic "
 
-	// UsersEndpoint is the API endoint for trackings.
+	// UsersEndpoint is the API endoint for users.
 	UsersEndpoint = "/api/users"
+
+	// OrgsEndpoint is the API endoint for organizations.
+	OrgsEndpoint = "/api/org"
 )

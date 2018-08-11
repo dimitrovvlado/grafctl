@@ -23,6 +23,6 @@ func newGetCmd(client *grafana.Client) *cobra.Command {
 	}
 
 	getCmd.AddCommand(newUsersCommand(client))
-
+	getCmd.AddCommand(newOrgCommand(client))
 	return getCmd
 }

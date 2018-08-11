@@ -2,7 +2,7 @@ package main
 
 // EnvSettings describes all of the environment settings.
 type EnvSettings struct {
-	//Full URL of gitlab host
+	//Full URL of Grafana host
 	GrafanaHost string
 	//Personal username
 	GrafanaUsername string
