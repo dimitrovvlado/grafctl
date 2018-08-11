@@ -27,3 +27,20 @@ type Address struct {
 	State    string `json:"state,omitempty"`
 	Country  string `json:"country,omitempty"`
 }
+
+//Datasource defines the data struct for an Datasource object
+type Datasource struct {
+	ID                int    `json:"id,omitempty"`
+	OrgID             int    `json:"orgId,omitempty"`
+	Name              string `json:"name,omitempty"`
+	Type              string `json:"type,omitempty"`
+	TypeLogoURL       string `json:"typeLogoUrl,omitempty"`
+	Access            string `json:"access,omitempty"`
+	URL               string `json:"url,omitempty"`
+	Password          string `json:"password,omitempty"`
+	User              string `json:"user,omitempty"`
+	Database          string `json:"database,omitempty"`
+	BasicAuth         bool   `json:"basicAuth,omitempty"`
+	IsDefault         bool   `json:"isDefault,omitempty"`
+	IsDeReadOnlyfault bool   `json:"readOnly,omitempty"`
+}

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// ListUsers returns a matched courier based on tracking number.
+// ListUsers returns a list of users.
 func (c *Client) ListUsers() ([]User, error) {
 	resp, err := c.doRequest(
 		http.MethodGet,
@@ -31,11 +31,11 @@ func (c *Client) ListUsers() ([]User, error) {
 	return users, nil
 }
 
-// ListOrgs returns a matched courier based on tracking number.
+// ListOrgs returns a list of organizations.
 func (c *Client) ListOrgs() ([]Org, error) {
 	resp, err := c.doRequest(
 		http.MethodGet,
-		UsersEndpoint,
+		OrgsEndpoint,
 		nil,
 	)
 	if err != nil {
@@ -55,4 +55,30 @@ func (c *Client) ListOrgs() ([]Org, error) {
 	}
 
 	return orgs, nil
+}
+
+// ListDatasources returns a list of datasources
+func (c *Client) ListDatasources() ([]Datasource, error) {
+	resp, err := c.doRequest(
+		http.MethodGet,
+		DatasourcesEndpoint,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Decode the response into a AfterShip response object.
+	var ds []Datasource
+	if err := decodeResponse(resp, &ds); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return nil, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	// Check if we didn't get a result and return an error if true.
+	if ds == nil || len(ds) <= 0 {
+		return make([]Datasource, 0), nil
+	}
+
+	return ds, nil
 }
