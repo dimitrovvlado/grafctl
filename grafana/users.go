@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+//TODO rename file
+
 // ListUsers returns a list of users.
 func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
 	var endpoint string
@@ -87,4 +89,25 @@ func (c *Client) ListDatasources() ([]Datasource, error) {
 	}
 
 	return ds, nil
+}
+
+// CreateDatasource creates a datasource
+func (c *Client) CreateDatasource(ds Datasource) (Datasource, error) {
+	resp, err := c.doRequest(
+		http.MethodPost,
+		DatasourcesEndpoint,
+		ds,
+	)
+	// Decode the response into a AfterShip response object.
+	var res Datasource
+	if err != nil {
+		return res, err
+	}
+
+	if err := decodeResponse(resp, &res); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return res, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return res, nil
 }

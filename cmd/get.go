@@ -24,7 +24,7 @@ func newGetCmd(client *grafana.Client) *cobra.Command {
 
 	getCmd.AddCommand(newOrgCommand(client))
 	getCmd.AddCommand(newUsersCommand(client))
-	getCmd.AddCommand(newDatasourceCommand(client))
+	getCmd.AddCommand(newDatasourceListCommand(client))
 
 	return getCmd
 }

@@ -11,13 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type datasourceCmd struct {
+type datasourceListCmd struct {
 	client *grafana.Client
 	output string
 }
 
-func newDatasourceCommand(client *grafana.Client) *cobra.Command {
-	get := &datasourceCmd{
+func newDatasourceListCommand(client *grafana.Client) *cobra.Command {
+	get := &datasourceListCmd{
 		client: client,
 	}
 	getDatasourcesCmd := &cobra.Command{
@@ -34,7 +34,7 @@ func newDatasourceCommand(client *grafana.Client) *cobra.Command {
 }
 
 // run creates a merge request
-func (i *datasourceCmd) run() error {
+func (i *datasourceListCmd) run() error {
 	ds, err := i.client.ListDatasources()
 	if err != nil {
 		logrus.Fatal(err)
