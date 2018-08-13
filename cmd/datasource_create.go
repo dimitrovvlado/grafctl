@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/sirupsen/logrus"
@@ -13,7 +15,7 @@ import (
 type datasourceCreateCmd struct {
 	client *grafana.Client
 	output string
-	file   string
+	files  *[]string
 }
 
 func newDatasourceCreateCommand(client *grafana.Client) *cobra.Command {
@@ -27,7 +29,8 @@ func newDatasourceCreateCommand(client *grafana.Client) *cobra.Command {
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			i.output = cmd.Flag("output").Value.String()
-			if i.file == "" {
+			//TODO maybe change the command to create a ds by a given set ot flags
+			if i.files == nil && len(*i.files) == 0 {
 				logrus.Warn("Command needs either a file reference or a set ot values.")
 				cmd.Help()
 				return nil
@@ -37,28 +40,58 @@ func newDatasourceCreateCommand(client *grafana.Client) *cobra.Command {
 		},
 	}
 
-	createDatasourcesCmd.PersistentFlags().StringVarP(&i.file, "from-file", "f", "", "A json file with the datasource")
-
+	i.files = createDatasourcesCmd.PersistentFlags().StringSliceP("filename", "f", []string{}, "Filename(s) or direcory to use to create the datasource")
 	return createDatasourcesCmd
 }
 
 // run creates a merge request
 func (i *datasourceCreateCmd) run() error {
-
-	var datasource grafana.Datasource
-	byteValue, _ := ioutil.ReadFile(i.file)
-
-	err := json.Unmarshal(byteValue, &datasource)
-	if err != nil {
-		logrus.Fatal(err)
+	for _, file := range *i.files {
+		importDatasource(file, i.client)
 	}
-
-	ds, err := i.client.CreateDatasource(datasource)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	//TODO
-	logrus.Info(ds.ID)
-
 	return nil
+}
+
+func importDatasource(filename string, client *grafana.Client) {
+	info, err := os.Stat(filename)
+	if err != nil {
+		logrus.Warn(err)
+		return
+	}
+	if info.IsDir() {
+		files, err := filePathWalkDir(filename)
+		if err != nil {
+			logrus.Warn(err)
+		} else {
+			for _, fi := range files {
+				importDatasource(fi, client)
+			}
+		}
+	} else {
+		var datasource grafana.Datasource
+		byteValue, _ := ioutil.ReadFile(filename)
+
+		err := json.Unmarshal(byteValue, &datasource)
+		if err != nil {
+			logrus.Warn(err)
+		}
+
+		ds, err := client.CreateDatasource(datasource)
+		if err != nil {
+			logrus.Warn(err)
+		} else {
+			logrus.Info("Datasource \"", ds.Name, "\" created")
+		}
+	}
+}
+
+func filePathWalkDir(root string) ([]string, error) {
+	var files []string
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
 }
