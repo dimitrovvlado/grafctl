@@ -9,7 +9,7 @@ import (
 )
 
 type rootCmd struct {
-	Verbous bool
+	Verbose bool
 	Output  string
 }
 
@@ -29,13 +29,14 @@ func NewRootCmd(client *grafana.Client) *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().BoolVarP(&i.Verbous, "verbose", "v", false, "Verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&i.Verbose, "verbose", "v", false, "Verbose output")
 	out := rootCmd.OutOrStdout()
 
 	rootCmd.AddCommand(
 		newVersionCmd(),
 		newGetCmd(client, out),
-		newCreateCmd(client, out))
+		newCreateCmd(client, out),
+		newDeletCmd(client, out))
 
 	return rootCmd
 }

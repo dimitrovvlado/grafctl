@@ -24,7 +24,7 @@ func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
 		return nil, err
 	}
 
-	// Decode the response into a AfterShip response object.
+	// Decode the response into a []User response object.
 	var users []User
 	if err := decodeResponse(resp, &users); err != nil {
 		// Read the body of the request, ignore the error since we are already in the error state.
@@ -50,7 +50,7 @@ func (c *Client) ListOrgs() ([]Org, error) {
 		return nil, err
 	}
 
-	// Decode the response into a AfterShip response object.
+	// Decode the response into a []Org response object.
 	var orgs []Org
 	if err := decodeResponse(resp, &orgs); err != nil {
 		// Read the body of the request, ignore the error since we are already in the error state.
@@ -65,6 +65,27 @@ func (c *Client) ListOrgs() ([]Org, error) {
 	return orgs, nil
 }
 
+// GetDatasource returns a datasource by ID
+func (c *Client) GetDatasource(id string) (Datasource, error) {
+	resp, err := c.doRequest(
+		http.MethodGet,
+		fmt.Sprintf("%s/%s", DatasourcesEndpoint, id),
+		nil,
+	)
+	if err != nil {
+		return Datasource{}, err
+	}
+
+	// Decode the response into a Datasource response object.
+	var ds Datasource
+	if err := decodeResponse(resp, &ds); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return Datasource{}, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return ds, nil
+}
+
 // ListDatasources returns a list of datasources
 func (c *Client) ListDatasources() ([]Datasource, error) {
 	resp, err := c.doRequest(
@@ -76,7 +97,7 @@ func (c *Client) ListDatasources() ([]Datasource, error) {
 		return nil, err
 	}
 
-	// Decode the response into a AfterShip response object.
+	// Decode the response into a []Datasource response object.
 	var ds []Datasource
 	if err := decodeResponse(resp, &ds); err != nil {
 		// Read the body of the request, ignore the error since we are already in the error state.
@@ -98,7 +119,7 @@ func (c *Client) CreateDatasource(ds Datasource) (Datasource, error) {
 		DatasourcesEndpoint,
 		ds,
 	)
-	// Decode the response into a AfterShip response object.
+	// Decode the response into a Datasource response object.
 	var res Datasource
 	if err != nil {
 		return res, err
@@ -110,4 +131,16 @@ func (c *Client) CreateDatasource(ds Datasource) (Datasource, error) {
 	}
 
 	return res, nil
+}
+
+// DeleteDatasource deletes a datasource
+func (c *Client) DeleteDatasource(ds Datasource) error {
+	resp, err := c.doRequest(
+		http.MethodDelete,
+		fmt.Sprintf("%s/%d", DatasourcesEndpoint, ds.ID),
+		nil,
+	)
+
+	defer resp.Body.Close()
+	return err
 }

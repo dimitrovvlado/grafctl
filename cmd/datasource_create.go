@@ -16,7 +16,6 @@ import (
 type datasourceCreateCmd struct {
 	client *grafana.Client
 	out    io.Writer
-	output string
 	files  *[]string
 }
 
@@ -31,7 +30,6 @@ func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		Short:   "Create datasource",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			i.output = cmd.Flag("output").Value.String()
 			//TODO maybe change the command to create a ds by a given set ot flags
 			if i.files == nil && len(*i.files) == 0 {
 				logrus.Warn("Command needs either a file reference or a set ot values.")
@@ -47,7 +45,7 @@ func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Co
 	return createDatasourcesCmd
 }
 
-// run creates a merge request
+// run creates a datasource
 func (i *datasourceCreateCmd) run() error {
 	for _, file := range *i.files {
 		importDatasource(file, i.client)
