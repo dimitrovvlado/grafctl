@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
@@ -13,13 +14,15 @@ import (
 
 type usersCmd struct {
 	client     *grafana.Client
+	out        io.Writer
 	output     string
 	currentOrg bool
 }
 
-func newUsersCommand(client *grafana.Client) *cobra.Command {
-	i := &usersCmd{
+func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
+	get := &usersCmd{
 		client: client,
+		out:    out,
 	}
 	getUsersCmd := &cobra.Command{
 		Use:     "users",
@@ -27,13 +30,12 @@ func newUsersCommand(client *grafana.Client) *cobra.Command {
 		Short:   "Display one or many users",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			i.output = cmd.Flag("output").Value.String()
-			return i.run()
+			return get.run()
 		},
 	}
-
-	getUsersCmd.PersistentFlags().BoolVarP(&i.currentOrg, "current-org", "c", false, "Display users in current organization only")
-
+	f := getUsersCmd.Flags()
+	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
+	getUsersCmd.PersistentFlags().BoolVarP(&get.currentOrg, "current-org", "c", false, "Display users in current organization only")
 	return getUsersCmd
 }
 
@@ -64,7 +66,7 @@ func (i *usersCmd) run() error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	fmt.Printf(result)
 
+	fmt.Fprintln(i.out, result)
 	return nil
 }

@@ -1,13 +1,14 @@
 package cmd
 
 import (
+	"io"
 	"os"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/spf13/cobra"
 )
 
-func newCreateCmd(client *grafana.Client) *cobra.Command {
+func newCreateCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 	createCmd := &cobra.Command{
 		Use:     "create",
 		Aliases: []string{""},
@@ -22,7 +23,7 @@ func newCreateCmd(client *grafana.Client) *cobra.Command {
 		},
 	}
 
-	createCmd.AddCommand(newDatasourceCreateCommand(client))
+	createCmd.AddCommand(newDatasourceCreateCommand(client, out))
 
 	return createCmd
 }

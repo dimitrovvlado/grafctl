@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -14,13 +15,15 @@ import (
 
 type datasourceCreateCmd struct {
 	client *grafana.Client
+	out    io.Writer
 	output string
 	files  *[]string
 }
 
-func newDatasourceCreateCommand(client *grafana.Client) *cobra.Command {
+func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 	i := &datasourceCreateCmd{
 		client: client,
+		out:    out,
 	}
 	createDatasourcesCmd := &cobra.Command{
 		Use:     "datasource",

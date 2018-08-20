@@ -30,12 +30,12 @@ func NewRootCmd(client *grafana.Client) *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&i.Verbous, "verbose", "v", false, "Verbose output")
-	rootCmd.PersistentFlags().StringVarP(&i.Output, "output", "o", "", "The specified format (|json)")
+	out := rootCmd.OutOrStdout()
 
 	rootCmd.AddCommand(
 		newVersionCmd(),
-		newGetCmd(client),
-		newCreateCmd(client))
+		newGetCmd(client, out),
+		newCreateCmd(client, out))
 
 	return rootCmd
 }

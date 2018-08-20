@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
@@ -13,12 +14,14 @@ import (
 
 type datasourceListCmd struct {
 	client *grafana.Client
+	out    io.Writer
 	output string
 }
 
-func newDatasourceListCommand(client *grafana.Client) *cobra.Command {
+func newDatasourceListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 	get := &datasourceListCmd{
 		client: client,
+		out:    out,
 	}
 	getDatasourcesCmd := &cobra.Command{
 		Use:     "datasources",
@@ -26,10 +29,11 @@ func newDatasourceListCommand(client *grafana.Client) *cobra.Command {
 		Short:   "Display one or many datasources",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			get.output = cmd.Flag("output").Value.String()
 			return get.run()
 		},
 	}
+	f := getDatasourcesCmd.Flags()
+	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
 	return getDatasourcesCmd
 }
 
@@ -56,7 +60,7 @@ func (i *datasourceListCmd) run() error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	fmt.Printf(result)
+	fmt.Fprintln(i.out, result)
 
 	return nil
 }

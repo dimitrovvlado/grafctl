@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
@@ -13,12 +14,14 @@ import (
 
 type orgCmd struct {
 	client *grafana.Client
+	out    io.Writer
 	output string
 }
 
-func newOrgCommand(client *grafana.Client) *cobra.Command {
+func newOrgListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 	get := &orgCmd{
 		client: client,
+		out:    out,
 	}
 	getOrgsCmd := &cobra.Command{
 		Use:     "organinizations",
@@ -26,10 +29,11 @@ func newOrgCommand(client *grafana.Client) *cobra.Command {
 		Short:   "Display the current organization.",
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			get.output = cmd.Flag("output").Value.String()
 			return get.run()
 		},
 	}
+	f := getOrgsCmd.Flags()
+	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
 	return getOrgsCmd
 }
 
@@ -56,7 +60,7 @@ func (i *orgCmd) run() error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	fmt.Printf(result)
+	fmt.Fprintln(i.out, result)
 
 	return nil
 }
