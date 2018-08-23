@@ -22,14 +22,6 @@
   revision = "36ee7e946282a3fb1cfecd476ddc9b35d8847e42"
 
 [[projects]]
-  digest = "1:1d2804b1c418d0b174e2f3a47a877814bac83a6e4da512ed8f1932ba9d98179f"
-  name = "github.com/helm/helm"
-  packages = ["pkg/helm/helmpath"]
-  pruneopts = "UT"
-  revision = "9ad53aac42165a5fadc6c87be0dea6b115f93090"
-  version = "v2.10.0"
-
-[[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
@@ -123,7 +115,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/gosuri/uitable",
-    "github.com/helm/helm/pkg/helm/helmpath",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/stretchr/testify",

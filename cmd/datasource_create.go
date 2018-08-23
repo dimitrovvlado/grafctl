@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
-	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -31,41 +31,36 @@ func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			//TODO maybe change the command to create a ds by a given set ot flags
-			if i.files == nil && len(*i.files) == 0 {
-				logrus.Warn("Command needs either a file reference or a set ot values.")
-				cmd.Help()
-				return nil
-			}
-
 			return i.run()
 		},
 	}
 
 	i.files = createDatasourcesCmd.PersistentFlags().StringSliceP("filename", "f", []string{}, "Filename(s) or direcory to use to create the datasource")
+	createDatasourcesCmd.MarkPersistentFlagRequired("filename")
 	return createDatasourcesCmd
 }
 
 // run creates a datasource
 func (i *datasourceCreateCmd) run() error {
 	for _, file := range *i.files {
-		importDatasource(file, i.client)
+		importDatasource(file, i)
 	}
 	return nil
 }
 
-func importDatasource(filename string, client *grafana.Client) {
+func importDatasource(filename string, cmd *datasourceCreateCmd) {
 	info, err := os.Stat(filename)
 	if err != nil {
-		logrus.Warn(err)
+		fmt.Fprintln(cmd.out, err)
 		return
 	}
 	if info.IsDir() {
 		files, err := filePathWalkDir(filename)
 		if err != nil {
-			logrus.Warn(err)
+			fmt.Fprintln(cmd.out, err)
 		} else {
 			for _, fi := range files {
-				importDatasource(fi, client)
+				importDatasource(fi, cmd)
 			}
 		}
 	} else {
@@ -74,14 +69,14 @@ func importDatasource(filename string, client *grafana.Client) {
 
 		err := json.Unmarshal(byteValue, &datasource)
 		if err != nil {
-			logrus.Warn(err)
+			fmt.Fprintln(cmd.out, err)
 		}
 
-		ds, err := client.CreateDatasource(datasource)
+		ds, err := cmd.client.CreateDatasource(datasource)
 		if err != nil {
-			logrus.Warn(err)
+			fmt.Fprintln(cmd.out, err)
 		} else {
-			logrus.Info("Datasource \"", ds.Name, "\" created")
+			fmt.Fprintln(cmd.out, "Datasource \""+ds.Name+"\" created")
 		}
 	}
 }

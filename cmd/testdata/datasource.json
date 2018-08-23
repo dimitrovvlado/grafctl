@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "orgId": 1,
+  "name": "Prometheus",
+  "type": "prometheus",
+  "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+  "access": "proxy",
+  "url": "http://prometheus-server",
+  "isDefault": true,
+  "readOnly": true
+}
