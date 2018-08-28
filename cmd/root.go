@@ -34,6 +34,7 @@ func NewRootCmd(client *grafana.Client) *cobra.Command {
 
 	rootCmd.AddCommand(
 		newVersionCmd(),
+		newConfigCommand(out),
 		newGetCmd(client, out),
 		newCreateCmd(client, out),
 		newDeletCmd(client, out))

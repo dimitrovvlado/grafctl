@@ -5,16 +5,21 @@ import (
 	"os"
 
 	"github.com/dimitrovvlado/grafctl/cmd"
+	"github.com/dimitrovvlado/grafctl/environment"
 	"github.com/dimitrovvlado/grafctl/grafana"
 )
 
 var (
-	settings EnvSettings
+	settings environment.EnvSettings
 	client   *grafana.Client
 )
 
 func main() {
-	settings.Init()
+	err := settings.Init()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	if len(os.Args) > 1 {
 		// Create the Grafana client.
