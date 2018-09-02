@@ -15,11 +15,10 @@ func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
 	} else {
 		endpoint = UsersEndpoint
 	}
-	resp, err := c.doRequest(
-		http.MethodGet,
-		endpoint,
-		nil,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: endpoint,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +40,10 @@ func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
 
 // ListOrgs returns a list of organizations.
 func (c *Client) ListOrgs() ([]Org, error) {
-	resp, err := c.doRequest(
-		http.MethodGet,
-		OrgsEndpoint,
-		nil,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: OrgsEndpoint,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -67,11 +65,10 @@ func (c *Client) ListOrgs() ([]Org, error) {
 
 // GetDatasource returns a datasource by ID
 func (c *Client) GetDatasource(id string) (Datasource, error) {
-	resp, err := c.doRequest(
-		http.MethodGet,
-		fmt.Sprintf("%s/%s", DatasourcesEndpoint, id),
-		nil,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: fmt.Sprintf("%s/%s", DatasourcesEndpoint, id),
+	})
 	if err != nil {
 		return Datasource{}, err
 	}
@@ -88,11 +85,10 @@ func (c *Client) GetDatasource(id string) (Datasource, error) {
 
 // ListDatasources returns a list of datasources
 func (c *Client) ListDatasources() ([]Datasource, error) {
-	resp, err := c.doRequest(
-		http.MethodGet,
-		DatasourcesEndpoint,
-		nil,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: DatasourcesEndpoint,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -114,11 +110,11 @@ func (c *Client) ListDatasources() ([]Datasource, error) {
 
 // CreateDatasource creates a datasource
 func (c *Client) CreateDatasource(ds Datasource) (Datasource, error) {
-	resp, err := c.doRequest(
-		http.MethodPost,
-		DatasourcesEndpoint,
-		ds,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodPost,
+		endpoint: DatasourcesEndpoint,
+		data:     ds,
+	})
 	// Decode the response into a Datasource response object.
 	var res Datasource
 	if err != nil {
@@ -135,12 +131,34 @@ func (c *Client) CreateDatasource(ds Datasource) (Datasource, error) {
 
 // DeleteDatasource deletes a datasource
 func (c *Client) DeleteDatasource(ds Datasource) error {
-	resp, err := c.doRequest(
-		http.MethodDelete,
-		fmt.Sprintf("%s/%d", DatasourcesEndpoint, ds.ID),
-		nil,
-	)
+	resp, err := c.doRequest(&request{
+		method:   http.MethodDelete,
+		endpoint: fmt.Sprintf("%s/%d", DatasourcesEndpoint, ds.ID),
+	})
 
 	defer resp.Body.Close()
 	return err
+}
+
+//SearchTeams returns a list of teams
+func (c *Client) SearchTeams(opt *SearchTeamsOptions) (TeamPage, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: TeamsEndpoint,
+		query: map[string]string{
+			"query": opt.Query,
+		},
+	})
+	if err != nil {
+		return TeamPage{}, err
+	}
+
+	// Decode the response into a TeamPage response object.
+	var teamPage TeamPage
+	if err := decodeResponse(resp, &teamPage); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return TeamPage{}, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return teamPage, nil
 }

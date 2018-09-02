@@ -13,7 +13,6 @@ func newDeletCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 		Use:     "delete",
 		Aliases: []string{"del"},
 		Short:   "Delete a resource by name or id",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				cmd.Help()

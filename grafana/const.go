@@ -18,4 +18,7 @@ const (
 
 	// DatasourcesEndpoint is the API endoint for datasources.
 	DatasourcesEndpoint = "/api/datasources"
+
+	// TeamsEndpoint is the API endpoint for Teams
+	TeamsEndpoint = "/api/teams/search"
 )

@@ -6,6 +6,9 @@ import (
 	"io"
 	"os"
 
+	"github.com/dimitrovvlado/grafctl/grafana"
+	"github.com/sirupsen/logrus"
+
 	"io/ioutil"
 
 	"github.com/dimitrovvlado/grafctl/environment"
@@ -80,4 +83,10 @@ func ensureDirectories(home environment.Home, out io.Writer) error {
 	}
 
 	return nil
+}
+
+func ensureClient(client *grafana.Client) {
+	if client == nil {
+		logrus.Fatal("Please configure grafctl with `grafctl config`")
+	}
 }

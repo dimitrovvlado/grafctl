@@ -27,8 +27,8 @@ func newDatasourceListCommand(client *grafana.Client, out io.Writer) *cobra.Comm
 		Use:     "datasources",
 		Aliases: []string{"ds"},
 		Short:   "Display one or many datasources",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ensureClient(get.client)
 			return get.run()
 		},
 	}
@@ -47,6 +47,9 @@ func (i *datasourceListCmd) run() error {
 	//TODO extract as flag
 	var colWidth uint = 60
 	formatter := func() string {
+		if ds == nil || len(ds) == 0 {
+			return fmt.Sprintf("No datasources found.")
+		}
 		table := uitable.New()
 		table.MaxColWidth = colWidth
 		table.AddRow("ID", "NAME", "TYPE", "ACCESS", "URL")

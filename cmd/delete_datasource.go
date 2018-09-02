@@ -25,13 +25,13 @@ func newDatasourceDeleteCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		Use:     "datasource",
 		Aliases: []string{"ds"},
 		Short:   "Delete datasource by ID",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				logrus.Warn("Command 'delete' requires an ID")
 				cmd.Help()
 				return nil
 			}
+			ensureClient(i.client)
 			i.datasourceID = args[0]
 			return i.run()
 		},

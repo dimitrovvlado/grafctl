@@ -31,7 +31,7 @@ func TestListEmptyUsersPlain(t *testing.T) {
 	var buf bytes.Buffer
 	cmd := newUsersListCommand(client, &buf)
 	cmd.RunE(cmd, []string{})
-	require.Equal(t, "ID	NAME	LOGIN	EMAIL", strings.TrimSpace(buf.String()))
+	require.Equal(t, "No users found.", strings.TrimSpace(buf.String()))
 }
 
 func TestListEmptyUsersJson(t *testing.T) {

@@ -28,8 +28,8 @@ func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 		Use:     "users",
 		Aliases: []string{"user"},
 		Short:   "Display one or many users",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ensureClient(get.client)
 			return get.run()
 		},
 	}
@@ -39,7 +39,6 @@ func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 	return getUsersCmd
 }
 
-// run creates a merge request
 func (i *usersCmd) run() error {
 	users, err := i.client.ListUsers(&grafana.ListUserOptions{CurrentOrg: i.currentOrg})
 	if err != nil {
@@ -49,6 +48,9 @@ func (i *usersCmd) run() error {
 	//TODO extract as flag
 	var colWidth uint = 60
 	formatter := func() string {
+		if users == nil || len(users) == 0 {
+			return fmt.Sprintf("No users found.")
+		}
 		table := uitable.New()
 		table.MaxColWidth = colWidth
 		table.AddRow("ID", "NAME", "LOGIN", "EMAIL")

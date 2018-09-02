@@ -3,6 +3,7 @@ package environment
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -14,6 +15,8 @@ type EnvSettings struct {
 	GrafanaUsername string
 	//Grafana password
 	GrafanaPassword string
+	//Settings are initilized
+	Initialized bool
 }
 
 // DefaultHome is the default folder of the configuration.
@@ -24,6 +27,11 @@ func (s *EnvSettings) Init() error {
 	//TODO make home folder configurable via env. variables
 	home := Home(DefaultHome)
 	cfg := home.ConfigFile()
+
+	//Non existing config should not block commands which don't need the client
+	if _, err := os.Stat(cfg); os.IsNotExist(err) {
+		return nil
+	}
 
 	b, err := ioutil.ReadFile(cfg)
 	if err != nil {
@@ -38,6 +46,6 @@ func (s *EnvSettings) Init() error {
 	s.GrafanaHost = jsonMap["hostname"]
 	s.GrafanaUsername = jsonMap["username"]
 	s.GrafanaPassword = jsonMap["password"]
-
+	s.Initialized = true
 	return nil
 }

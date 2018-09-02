@@ -28,8 +28,8 @@ func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		Use:     "datasource",
 		Aliases: []string{"ds"},
 		Short:   "Create datasource",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ensureClient(i.client)
 			//TODO maybe change the command to create a ds by a given set ot flags
 			return i.run()
 		},

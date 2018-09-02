@@ -21,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(os.Args) > 1 {
+	if len(os.Args) > 1 && settings.Initialized {
 		// Create the Grafana client.
 		client = grafana.New(settings.GrafanaHost, settings.GrafanaUsername, settings.GrafanaPassword)
 	}

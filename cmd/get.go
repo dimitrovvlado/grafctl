@@ -13,7 +13,6 @@ func newGetCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 		Use:     "get",
 		Aliases: []string{""},
 		Short:   "Display one or many resources",
-		Long:    `TODO`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				cmd.Help()
@@ -26,6 +25,7 @@ func newGetCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 	getCmd.AddCommand(newOrgListCommand(client, out))
 	getCmd.AddCommand(newUsersListCommand(client, out))
 	getCmd.AddCommand(newDatasourceListCommand(client, out))
+	getCmd.AddCommand(newTeamsListCommand(client, out))
 
 	return getCmd
 }

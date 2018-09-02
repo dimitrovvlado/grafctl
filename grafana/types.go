@@ -51,3 +51,26 @@ type Datasource struct {
 	IsDefault         bool   `json:"isDefault,omitempty"`
 	IsDeReadOnlyfault bool   `json:"readOnly,omitempty"`
 }
+
+//SearchTeamsOptions options for querying teams
+type SearchTeamsOptions struct {
+	Query string
+}
+
+//TeamPage defines a search page for Teams
+type TeamPage struct {
+	TotalCount int    `json:"totalCount,omitempty"`
+	Teams      []Team `json:"teams,omitempty"`
+	Page       int    `json:"page,omitempty"`
+	PerPage    int    `json:"perPage,omitempty"`
+}
+
+//Team defines the data struct for a Team
+type Team struct {
+	ID          int    `json:"id,omitempty"`
+	OrgID       int    `json:"orgId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Email       string `json:"email,omitempty"`
+	AvatarURL   string `json:"avatarUrl,omitempty"`
+	MemberCount int    `json:"memberCount,omitempty"`
+}

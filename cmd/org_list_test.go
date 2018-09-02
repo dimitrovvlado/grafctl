@@ -29,7 +29,7 @@ func TestListEmptyOrgsPlain(t *testing.T) {
 	var buf bytes.Buffer
 	cmd := newOrgListCommand(client, &buf)
 	cmd.RunE(cmd, []string{})
-	require.Equal(t, "ID	NAME	CITY	STATE	COUNTRY", strings.TrimSpace(buf.String()))
+	require.Equal(t, "No organizations found.", strings.TrimSpace(buf.String()))
 }
 
 func TestListEmptyOrgsJson(t *testing.T) {

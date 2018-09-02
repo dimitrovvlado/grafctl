@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/dimitrovvlado/grafctl/version"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +15,8 @@ func newVersionCmd() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number of grafctl",
-		Long:  `TODO`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Grafana command tool v0.1")
+			fmt.Printf("Grafana command tool %s\n", version.VERSION)
 		},
 	}
 

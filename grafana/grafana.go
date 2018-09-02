@@ -34,43 +34,60 @@ func (c *Client) SetVerbose(verbose bool) {
 	c.verbose = verbose
 }
 
-func (c *Client) doRequest(method, endpoint string, data interface{}) (*http.Response, error) {
+type request struct {
+	method   string
+	endpoint string
+	data     interface{}
+	query    map[string]string
+}
+
+//func (c *Client) doRequest(method, endpoint string, data interface{}, query map[string]string) (*http.Response, error) {
+func (c *Client) doRequest(req *request) (*http.Response, error) {
 	client := http.DefaultClient
 
 	// Encode data if we are passed an object.
 	b := bytes.NewBuffer(nil)
-	if data != nil {
+	if req.data != nil {
 		// Create the encoder.
 		enc := json.NewEncoder(b)
-		if err := enc.Encode(data); err != nil {
+		if err := enc.Encode(req.data); err != nil {
 			return nil, fmt.Errorf("json encoding data for doRequest failed: %v", err)
 		}
 	}
 
 	// Create the request.
-	uri := fmt.Sprintf("%s/%s", c.apiURI, strings.Trim(endpoint, "/"))
+	uri := fmt.Sprintf("%s/%s", c.apiURI, strings.Trim(req.endpoint, "/"))
 
-	req, err := http.NewRequest(method, uri, b)
+	httpReq, err := http.NewRequest(req.method, uri, b)
 	if err != nil {
-		return nil, fmt.Errorf("creating %s request to %s failed: %v", method, uri, err)
+		return nil, fmt.Errorf("creating %s request to %s failed: %v", req.method, uri, err)
 	}
 
 	// Set the correct headers.
-	req.Header.Set("Authorization", AuthorizationTypeBasic+basicAuth(c.username, c.password))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
+	httpReq.Header.Set("Authorization", AuthorizationTypeBasic+basicAuth(c.username, c.password))
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Accept", "application/json")
+
+	// Set query parameters if any
+	if req.query != nil {
+		q := httpReq.URL.Query()
+		for k, v := range req.query {
+			q.Set(k, v)
+		}
+		httpReq.URL.RawQuery = q.Encode()
+	}
 
 	if c.verbose {
-		debug, err := httputil.DumpRequestOut(req, true)
+		debug, err := httputil.DumpRequestOut(httpReq, true)
 		if err == nil {
 			fmt.Println(string(debug))
 		}
 	}
 
 	// Do the request.
-	resp, err := client.Do(req)
+	resp, err := client.Do(httpReq)
 	if err != nil {
-		return nil, fmt.Errorf("performing %s request to %s failed: %v", method, uri, err)
+		return nil, fmt.Errorf("performing %s request to %s failed: %v", req.method, uri, err)
 	}
 
 	if c.verbose {
@@ -107,7 +124,7 @@ func (c *Client) doRequest(method, endpoint string, data interface{}) (*http.Res
 			message = "Something went wrong on Grafana's end."
 		}
 
-		return nil, fmt.Errorf("%s request to %s returned status code %d: message -> %s\nbody -> %s", method, uri, resp.StatusCode, message, string(body))
+		return nil, fmt.Errorf("%s request to %s returned status code %d: message -> %s\nbody -> %s", req.method, uri, resp.StatusCode, message, string(body))
 	}
 
 	// Return errors on the API errors.

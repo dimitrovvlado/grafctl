@@ -1,0 +1,15 @@
+{
+    "totalCount": 1,
+    "teams": [
+        {
+            "id": 1,
+            "orgId": 1,
+            "name": "TestTeam",
+            "email": "team@localhost",
+            "avatarUrl": "/avatar/56e7566caca8d1a28053e76ae12e9a71",
+            "memberCount": 1
+        }
+    ],
+    "page": 1,
+    "perPage": 1000
+}
