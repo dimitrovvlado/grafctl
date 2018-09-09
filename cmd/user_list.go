@@ -3,13 +3,12 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
 
 	"github.com/spf13/cobra"
-
-	"github.com/sirupsen/logrus"
 )
 
 type usersCmd struct {
@@ -42,7 +41,7 @@ func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 func (i *usersCmd) run() error {
 	users, err := i.client.ListUsers(&grafana.ListUserOptions{CurrentOrg: i.currentOrg})
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	//TODO extract as flag
@@ -66,7 +65,7 @@ func (i *usersCmd) run() error {
 
 	result, err := formatResult(i.output, users, formatter)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Fprintln(i.out, result)

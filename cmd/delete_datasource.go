@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
-	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,7 @@ func newDatasourceDeleteCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		Short:   "Delete datasource by ID",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				logrus.Warn("Command 'delete' requires an ID")
+				log.Println("Command 'delete' requires an ID")
 				cmd.Help()
 				return nil
 			}
@@ -44,7 +44,7 @@ func newDatasourceDeleteCommand(client *grafana.Client, out io.Writer) *cobra.Co
 func (i *datasourceDeleteCmd) run() error {
 	ds, err := i.client.GetDatasource(i.datasourceID)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 	err = i.client.DeleteDatasource(ds)
 	if err != nil {

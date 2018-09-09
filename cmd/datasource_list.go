@@ -3,13 +3,12 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
 
 	"github.com/spf13/cobra"
-
-	"github.com/sirupsen/logrus"
 )
 
 type datasourceListCmd struct {
@@ -41,7 +40,7 @@ func newDatasourceListCommand(client *grafana.Client, out io.Writer) *cobra.Comm
 func (i *datasourceListCmd) run() error {
 	ds, err := i.client.ListDatasources()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	//TODO extract as flag
@@ -61,7 +60,7 @@ func (i *datasourceListCmd) run() error {
 
 	result, err := formatResult(i.output, ds, formatter)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 	fmt.Fprintln(i.out, result)
 

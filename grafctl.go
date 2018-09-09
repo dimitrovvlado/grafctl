@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/dimitrovvlado/grafctl/cmd"
@@ -15,10 +15,11 @@ var (
 )
 
 func main() {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
 	err := settings.Init()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	if len(os.Args) > 1 && settings.Initialized {
@@ -29,20 +30,6 @@ func main() {
 	rootCmd := cmd.NewRootCmd(client)
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-}
-
-// CheckIfErrorAndExit should be used to naively panics if an error is not nil.
-func CheckIfErrorAndExit(err error) {
-	if err != nil {
-		fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("Error: %s", err))
-		os.Exit(1)
-	}
-}
-
-// Info should be used to describe the example commands that are about to run.
-func Info(format string, args ...interface{}) {
-	fmt.Printf("\x1b[34;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }

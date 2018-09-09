@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ func newTeamsListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 func (i *teamsCmd) run() error {
 	teamsPage, err := i.client.SearchTeams(&grafana.SearchTeamsOptions{Query: i.query})
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 	teams := teamsPage.Teams
 	//TODO extract as flag
@@ -60,7 +60,7 @@ func (i *teamsCmd) run() error {
 
 	result, err := formatResult(i.output, teams, formatter)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Fprintln(i.out, result)

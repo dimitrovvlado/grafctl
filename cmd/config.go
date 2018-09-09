@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
-	"github.com/sirupsen/logrus"
 
 	"io/ioutil"
 
@@ -52,7 +52,7 @@ func (i *configCmd) run() error {
 		return err
 	}
 
-	fmt.Fprintf(i.out, "grafctl has been configured at %s.\n", i.home.String())
+	log.Printf("grafctl has been configured at %s", i.home.String())
 
 	var conf = map[string]string{"hostname": i.hostname, "username": i.username, "password": i.password}
 	j, err := json.Marshal(conf)
@@ -73,7 +73,7 @@ func ensureDirectories(home environment.Home, out io.Writer) error {
 	}
 	for _, p := range configDirectories {
 		if fi, err := os.Stat(p); err != nil {
-			fmt.Fprintf(out, "Creating %s \n", p)
+			log.Printf("Creating %s\n", p)
 			if err := os.MkdirAll(p, 0755); err != nil {
 				return fmt.Errorf("Could not create %s: %s", p, err)
 			}
@@ -87,6 +87,6 @@ func ensureDirectories(home environment.Home, out io.Writer) error {
 
 func ensureClient(client *grafana.Client) {
 	if client == nil {
-		logrus.Fatal("Please configure grafctl with `grafctl config`")
+		log.Fatalln("Please configure grafctl with `grafctl config`")
 	}
 }

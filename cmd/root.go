@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
@@ -30,6 +31,7 @@ func NewRootCmd(client *grafana.Client) *cobra.Command {
 
 	rootCmd.PersistentFlags().BoolVarP(&i.Verbose, "verbose", "v", false, "Verbose output")
 	out := rootCmd.OutOrStdout()
+	log.SetOutput(out)
 
 	rootCmd.AddCommand(
 		newVersionCmd(),
