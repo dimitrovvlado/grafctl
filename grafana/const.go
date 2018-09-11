@@ -21,4 +21,7 @@ const (
 
 	// TeamsEndpoint is the API endpoint for Teams
 	TeamsEndpoint = "/api/teams/search"
+
+	//DashboardSearchEndpoint is the API endpoint for searching dashboards
+	DashboardSearchEndpoint = "/api/search"
 )

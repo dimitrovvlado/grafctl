@@ -26,6 +26,7 @@ func newGetCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 	getCmd.AddCommand(newUsersListCommand(client, out))
 	getCmd.AddCommand(newDatasourceListCommand(client, out))
 	getCmd.AddCommand(newTeamsListCommand(client, out))
+	getCmd.AddCommand(newDashboardListCommand(client, out))
 
 	return getCmd
 }

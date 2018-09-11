@@ -4,40 +4,41 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
 	"github.com/gosuri/uitable"
-
 	"github.com/spf13/cobra"
 )
 
-type datasourceListCmd struct {
+type dashboardListCmd struct {
+	// ListDashboards
 	client *grafana.Client
 	out    io.Writer
 	output string
 }
 
-func newDatasourceListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
-	get := &datasourceListCmd{
+func newDashboardListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
+	get := &dashboardListCmd{
 		client: client,
 		out:    out,
 	}
-	getDatasourcesCmd := &cobra.Command{
-		Use:     "datasources",
-		Aliases: []string{"ds"},
-		Short:   "Display one or many datasources",
+	getDashboardsCmd := &cobra.Command{
+		Use:     "dashboards",
+		Aliases: []string{"db", "dbs"},
+		Short:   "Display one or many dashboards",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ensureClient(get.client)
 			return get.run()
 		},
 	}
-	f := getDatasourcesCmd.Flags()
+	f := getDashboardsCmd.Flags()
 	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
-	return getDatasourcesCmd
+	return getDashboardsCmd
 }
 
-func (i *datasourceListCmd) run() error {
-	ds, err := i.client.ListDatasources()
+func (i *dashboardListCmd) run() error {
+	db, err := i.client.ListDashboards()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -45,19 +46,19 @@ func (i *datasourceListCmd) run() error {
 	//TODO extract as flag
 	var colWidth uint = 60
 	formatter := func() string {
-		if ds == nil || len(ds) == 0 {
-			return fmt.Sprintf("No datasources found.")
+		if db == nil || len(db) == 0 {
+			return fmt.Sprintf("No dashboards found.")
 		}
 		table := uitable.New()
 		table.MaxColWidth = colWidth
-		table.AddRow("ID", "NAME", "TYPE", "ACCESS", "URL")
-		for _, lr := range ds {
-			table.AddRow(lr.ID, lr.Name, lr.Type, lr.Access, lr.URL)
+		table.AddRow("ID", "TITLE", "URI", "TAGS")
+		for _, lr := range db {
+			table.AddRow(lr.ID, lr.Title, lr.URI, strings.Join(lr.Tags, ", "))
 		}
 		return fmt.Sprintf("%s%s", table.String(), "\n")
 	}
 
-	result, err := formatResult(i.output, ds, formatter)
+	result, err := formatResult(i.output, db, formatter)
 	if err != nil {
 		log.Fatalln(err)
 	}

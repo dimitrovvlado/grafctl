@@ -74,3 +74,15 @@ type Team struct {
 	AvatarURL   string `json:"avatarUrl,omitempty"`
 	MemberCount int    `json:"memberCount,omitempty"`
 }
+
+//Dashboard defines the data struct for a Dashboard search result
+type Dashboard struct {
+	ID        int      `json:"id,omitempty"`
+	UID       string   `json:"uid,omitempty"`
+	Title     string   `json:"title,omitempty"`
+	URI       string   `json:"uri,omitempty"`
+	URL       string   `json:"url,omitempty"`
+	Type      string   `json:"type,omitempty"`
+	Tags      []string `json:"tags,omitempty"`
+	IsStarred bool     `json:"isStarred,omitempty"`
+}
