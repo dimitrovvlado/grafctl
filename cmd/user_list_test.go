@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
@@ -15,18 +14,14 @@ import (
 )
 
 func TestListEmptyUsersPlain(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var resp string
-		switch r.RequestURI {
-		case grafana.UsersEndpoint:
-			resp = "[]"
-		default:
-			return
-		}
-		w.Write([]byte(resp))
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.UsersEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newUsersListCommand(client, &buf)
@@ -35,21 +30,17 @@ func TestListEmptyUsersPlain(t *testing.T) {
 }
 
 func TestListEmptyUsersJson(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var resp string
-		switch r.RequestURI {
-		case grafana.UsersEndpoint:
-			resp = "[]"
-		default:
-			return
-		}
-		w.Write([]byte(resp))
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.UsersEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newUsersListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)
@@ -58,19 +49,17 @@ func TestListEmptyUsersJson(t *testing.T) {
 
 func TestListUsersJson(t *testing.T) {
 	userBytes := helperLoadBytes(t, "users.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.UsersEndpoint:
-			w.Write(userBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.UsersEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write(userBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newUsersListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)
@@ -86,16 +75,14 @@ func TestListUsersJson(t *testing.T) {
 
 func TestListUsersPlain(t *testing.T) {
 	userBytes := helperLoadBytes(t, "users.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.UsersEndpoint:
-			w.Write(userBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.UsersEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write(userBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newUsersListCommand(client, &buf)

@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -13,18 +12,14 @@ import (
 )
 
 func TestListEmptyOrgsPlain(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var resp string
-		switch r.RequestURI {
-		case grafana.OrgsEndpoint:
-			resp = "[]"
-		default:
-			return
-		}
-		w.Write([]byte(resp))
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.OrgsEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newOrgListCommand(client, &buf)
@@ -33,21 +28,17 @@ func TestListEmptyOrgsPlain(t *testing.T) {
 }
 
 func TestListEmptyOrgsJson(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var resp string
-		switch r.RequestURI {
-		case grafana.OrgsEndpoint:
-			resp = "[]"
-		default:
-			return
-		}
-		w.Write([]byte(resp))
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.OrgsEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newOrgListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)

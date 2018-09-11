@@ -3,8 +3,6 @@ package cmd
 import (
 	"bytes"
 	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/dimitrovvlado/grafctl/grafana"
@@ -13,18 +11,17 @@ import (
 
 func TestCreateDatasource(t *testing.T) {
 	dsBytes := helperLoadBytes(t, "datasource.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.DatasourcesEndpoint:
-			w.Write(dsBytes)
-		default:
-			return
-		}
-	}))
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.DatasourcesEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write(dsBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("-f testdata/datasource.json", " ")
+	flags := []string{"-f", "testdata/datasource.json"}
 	cmd := newDatasourceCreateCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)

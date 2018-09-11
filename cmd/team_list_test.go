@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -14,16 +13,14 @@ import (
 
 func TestListEmptyTeamPlain(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "emptyTeams.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.TeamsEndpoint + "?query=":
-			w.Write(teamBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.TeamsEndpoint + "?query=",
+			handler: func(w http.ResponseWriter) {
+				w.Write(teamBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newTeamsListCommand(client, &buf)
@@ -33,19 +30,17 @@ func TestListEmptyTeamPlain(t *testing.T) {
 
 func TestListEmptyTeamJson(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "emptyTeams.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.TeamsEndpoint + "?query=":
-			w.Write(teamBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.TeamsEndpoint + "?query=",
+			handler: func(w http.ResponseWriter) {
+				w.Write(teamBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newTeamsListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)
@@ -53,16 +48,14 @@ func TestListEmptyTeamJson(t *testing.T) {
 }
 func TestListTeamsPlain(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "teams.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.TeamsEndpoint + "?query=":
-			w.Write(teamBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.TeamsEndpoint + "?query=",
+			handler: func(w http.ResponseWriter) {
+				w.Write(teamBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newTeamsListCommand(client, &buf)

@@ -2,9 +2,29 @@ package cmd
 
 import (
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"path/filepath"
 	"testing"
+
+	"github.com/dimitrovvlado/grafctl/grafana"
 )
+
+type requestCase struct {
+	requestURI string
+	handler    func(w http.ResponseWriter)
+}
+
+func mockClient(cases []requestCase) *grafana.Client {
+	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, req := range cases {
+			if req.requestURI == r.RequestURI {
+				req.handler(w)
+			}
+		}
+	}))
+	return grafana.New(apiStub.URL, "username", "password")
+}
 
 func helperLoadBytes(t *testing.T, name string) []byte {
 	path := filepath.Join("testdata", name)

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
@@ -15,16 +14,14 @@ import (
 )
 
 func TestListEmptyDatasourcePlain(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.DatasourcesEndpoint:
-			w.Write([]byte("[]"))
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.DatasourcesEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newDatasourceListCommand(client, &buf)
@@ -33,19 +30,17 @@ func TestListEmptyDatasourcePlain(t *testing.T) {
 }
 
 func TestListEmptyDatasourceJson(t *testing.T) {
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.DatasourcesEndpoint:
-			w.Write([]byte("[]"))
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.DatasourcesEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write([]byte("[]"))
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newDatasourceListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)
@@ -54,19 +49,17 @@ func TestListEmptyDatasourceJson(t *testing.T) {
 
 func TestListDatasourcesJson(t *testing.T) {
 	dsBytes := helperLoadBytes(t, "datasources.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.DatasourcesEndpoint:
-			w.Write(dsBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.DatasourcesEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write(dsBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
-	flags := strings.Split("--output json", " ")
+	flags := []string{"--output", "json"}
 	cmd := newDatasourceListCommand(client, &buf)
 	cmd.ParseFlags(flags)
 	cmd.RunE(cmd, flags)
@@ -82,16 +75,14 @@ func TestListDatasourcesJson(t *testing.T) {
 
 func TestListDatasourcesPlain(t *testing.T) {
 	dsBytes := helperLoadBytes(t, "datasources.json")
-	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.RequestURI {
-		case grafana.DatasourcesEndpoint:
-			w.Write(dsBytes)
-		default:
-			return
-		}
-	}))
-
-	client := grafana.New(apiStub.URL, "username", "password")
+	client := mockClient([]requestCase{
+		{
+			requestURI: grafana.DatasourcesEndpoint,
+			handler: func(w http.ResponseWriter) {
+				w.Write(dsBytes)
+			},
+		},
+	})
 
 	var buf bytes.Buffer
 	cmd := newDatasourceListCommand(client, &buf)
