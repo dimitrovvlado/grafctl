@@ -7,7 +7,6 @@ import (
 
 // ListDashboards returns a list of dashboards.
 func (c *Client) ListDashboards() ([]Dashboard, error) {
-
 	resp, err := c.doRequest(&request{
 		method:   http.MethodGet,
 		endpoint: SearchEndpoint,

@@ -52,7 +52,7 @@ type Client struct {
 	apiURI   string
 	username string
 	password string
-	Verbose  bool
+	verbose  bool
 }
 
 // New creates a new Grafana API client.
@@ -66,7 +66,7 @@ func New(apiURI, username, password string) *Client {
 
 //SetVerbose enables verbous logging of requests and responses
 func (c *Client) SetVerbose(verbose bool) {
-	c.Verbose = verbose
+	c.verbose = verbose
 }
 
 type request struct {
@@ -112,7 +112,7 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		httpReq.URL.RawQuery = q.Encode()
 	}
 
-	if c.Verbose {
+	if c.verbose {
 		debug, err := httputil.DumpRequestOut(httpReq, true)
 		if err == nil {
 			fmt.Printf("%s\n", string(debug))
@@ -125,7 +125,7 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		return nil, fmt.Errorf("performing %s request to %s failed: %v", req.method, uri, err)
 	}
 
-	if c.Verbose {
+	if c.verbose {
 		debug, err := httputil.DumpResponse(resp, true)
 		if err == nil {
 			fmt.Printf("%s\n", string(debug))
