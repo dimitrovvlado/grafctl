@@ -12,12 +12,47 @@ import (
 	"strings"
 )
 
+var (
+	//ErrUnauthorized error
+	ErrUnauthorized = newError(401, "Not authenticated")
+	//ErrForbidden error
+	ErrForbidden = newError(403, "Access refused or not allowed")
+	//ErrNotFound error
+	ErrNotFound = newError(404, "Access refused or not allowed")
+	//ErrTooManyRequests error
+	ErrTooManyRequests = newError(429, "You have exceeded the API call rate limit")
+	//ErrNotImplemented error
+	ErrNotImplemented = newError(501, "Not Implemented")
+	//ErrBadGateway error
+	ErrBadGateway = newError(502, "Bad Gateway")
+	//ErrServiceUnavailable error
+	ErrServiceUnavailable = newError(503, "Service Unavailable")
+)
+
+//Error struct for http errors comming from grafana
+type Error struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *Error) Error() string {
+	return fmt.Sprintf("Error %d, %s", e.StatusCode, e.Message)
+}
+
+// New returns an error that formats as the given text.
+func newError(statusCode int, text string) error {
+	return &Error{
+		StatusCode: statusCode,
+		Message:    text,
+	}
+}
+
 //Client for http requests
 type Client struct {
 	apiURI   string
 	username string
 	password string
-	verbose  bool
+	Verbose  bool
 }
 
 // New creates a new Grafana API client.
@@ -31,7 +66,7 @@ func New(apiURI, username, password string) *Client {
 
 //SetVerbose enables verbous logging of requests and responses
 func (c *Client) SetVerbose(verbose bool) {
-	c.verbose = verbose
+	c.Verbose = verbose
 }
 
 type request struct {
@@ -77,10 +112,10 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		httpReq.URL.RawQuery = q.Encode()
 	}
 
-	if c.verbose {
+	if c.Verbose {
 		debug, err := httputil.DumpRequestOut(httpReq, true)
 		if err == nil {
-			fmt.Println(string(debug))
+			fmt.Printf("%s\n", string(debug))
 		}
 	}
 
@@ -90,10 +125,10 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		return nil, fmt.Errorf("performing %s request to %s failed: %v", req.method, uri, err)
 	}
 
-	if c.verbose {
+	if c.Verbose {
 		debug, err := httputil.DumpResponse(resp, true)
 		if err == nil {
-			fmt.Println(string(debug))
+			fmt.Printf("%s\n", string(debug))
 		}
 	}
 
@@ -107,21 +142,21 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		var message string
 		switch resp.StatusCode {
 		case http.StatusUnauthorized: // 401
-			message = "Unauthorized."
+			return nil, ErrUnauthorized
 		case http.StatusForbidden: // 403
-			message = "The request is understood, but it has been refused or access is not allowed."
+			return nil, ErrForbidden
 		case http.StatusNotFound: // 404
-			message = "The URI requested is invalid or the resource requested does not exist."
+			return nil, ErrNotFound
 		case http.StatusTooManyRequests: // 429
-			message = "You have exceeded the API call rate limit. Default limit is 10 requests per second."
+			return nil, ErrTooManyRequests
 		case http.StatusInternalServerError: // 500
-			message = "Something went wrong on Grafana's end."
+			return nil, decodeError(resp, body)
 		case http.StatusNotImplemented: // 501
-			message = "Something went wrong on Grafana's end."
+			return nil, ErrNotImplemented
 		case http.StatusBadGateway: // 502
-			message = "Something went wrong on Grafana's end."
+			return nil, ErrBadGateway
 		case http.StatusServiceUnavailable: // 503
-			message = "Something went wrong on Grafana's end."
+			return nil, ErrServiceUnavailable
 		}
 
 		return nil, fmt.Errorf("%s request to %s returned status code %d: message -> %s\nbody -> %s", req.method, uri, resp.StatusCode, message, string(body))
@@ -143,6 +178,19 @@ func decodeResponse(resp *http.Response, v interface{}) error {
 	}
 	defer resp.Body.Close()
 	return json.Unmarshal(buf.Bytes(), v)
+}
+
+func decodeError(resp *http.Response, body []byte) error {
+	var msg map[string]interface{}
+	err := json.Unmarshal(body, &msg)
+	if err != nil {
+		return fmt.Errorf("Unexpected status code %d", resp.StatusCode)
+	}
+	msgStr := msg["message"].(string)
+	if msgStr == "" {
+		return fmt.Errorf("Unexpected status code %d", resp.StatusCode)
+	}
+	return newError(resp.StatusCode, msg["message"].(string))
 }
 
 func basicAuth(username, password string) string {

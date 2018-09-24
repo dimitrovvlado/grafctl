@@ -86,3 +86,27 @@ type Dashboard struct {
 	Tags      []string `json:"tags,omitempty"`
 	IsStarred bool     `json:"isStarred,omitempty"`
 }
+
+//DashboardRequest defines the data struct for create/update of a Dashbord
+type DashboardRequest struct {
+	Dashboard interface{} `json:"dashboard,omitempty"`
+	Overwrite *bool       `json:"overwrite,omitempty"`
+	FolderID  int         `json:"folderId,omitempty"`
+	Message   string      `json:"message,omitempty"`
+}
+
+//DashboardResponse defines the data struct for a response after successful Dashboard create
+type DashboardResponse struct {
+	PluginID         string `json:"pluginId,omitempty"`
+	Title            string `json:"title,omitempty"`
+	Imported         bool   `json:"imported,omitempty"`
+	ImportedURI      string `json:"importedUri,omitempty"`
+	ImportedURL      string `json:"importedUrl,omitempty"`
+	Slug             string `json:"slug,omitempty"`
+	DashboardID      int    `json:"dashboardId,omitempty"`
+	ImportedRevision int    `json:"importedRevision,omitempty"`
+	Revision         int    `json:"revision,omitempty"`
+	Description      string `json:"description,omitempty"`
+	Path             string `json:"path,omitempty"`
+	Removed          bool   `json:"removed,omitempty"`
+}

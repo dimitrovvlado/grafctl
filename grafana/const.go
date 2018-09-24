@@ -22,6 +22,9 @@ const (
 	// TeamsEndpoint is the API endpoint for Teams
 	TeamsEndpoint = "/api/teams/search"
 
-	//DashboardSearchEndpoint is the API endpoint for searching dashboards
-	DashboardSearchEndpoint = "/api/search"
+	//SearchEndpoint is the API endpoint for searching
+	SearchEndpoint = "/api/search"
+
+	//DashboardsImportEndpoint is the API endpoint for create/update of dashboards
+	DashboardsImportEndpoint = "/api/dashboards/import"
 )

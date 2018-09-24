@@ -10,7 +10,7 @@ func (c *Client) ListDashboards() ([]Dashboard, error) {
 
 	resp, err := c.doRequest(&request{
 		method:   http.MethodGet,
-		endpoint: DashboardSearchEndpoint,
+		endpoint: SearchEndpoint,
 	})
 	if err != nil {
 		return nil, err
@@ -34,4 +34,24 @@ func (c *Client) ListDashboards() ([]Dashboard, error) {
 	}
 
 	return dashboards, nil
+}
+
+// CreateDashboard creates a dashboard.
+func (c *Client) CreateDashboard(db DashboardRequest) (DashboardResponse, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodPost,
+		endpoint: DashboardsImportEndpoint,
+		data:     db,
+	})
+	if err != nil {
+		return DashboardResponse{}, err
+	}
+
+	var dr DashboardResponse
+	if err := decodeResponse(resp, &dr); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return DashboardResponse{}, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return dr, nil
 }

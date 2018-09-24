@@ -13,7 +13,7 @@ import (
 func TestListDashboardsEmpty(t *testing.T) {
 	client := mockClient([]requestCase{
 		{
-			requestURI: grafana.DashboardSearchEndpoint,
+			requestURI: grafana.SearchEndpoint,
 			handler: func(w http.ResponseWriter) {
 				w.Write([]byte("[]"))
 			},
@@ -30,7 +30,7 @@ func TestListDashboardsFilter(t *testing.T) {
 	dbBytes := helperLoadBytes(t, "dashboardsAndFolders.json")
 	client := mockClient([]requestCase{
 		{
-			requestURI: grafana.DashboardSearchEndpoint,
+			requestURI: grafana.SearchEndpoint,
 			handler: func(w http.ResponseWriter) {
 				w.Write(dbBytes)
 			},

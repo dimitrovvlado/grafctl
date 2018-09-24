@@ -3,8 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -51,13 +53,13 @@ func (i *datasourceCreateCmd) run() error {
 func importDatasource(filename string, cmd *datasourceCreateCmd) {
 	info, err := os.Stat(filename)
 	if err != nil {
-		fmt.Fprintln(cmd.out, err)
+		log.Println(err)
 		return
 	}
 	if info.IsDir() {
 		files, err := filePathWalkDir(filename)
 		if err != nil {
-			fmt.Fprintln(cmd.out, err)
+			log.Println(err)
 		} else {
 			for _, fi := range files {
 				importDatasource(fi, cmd)
@@ -69,12 +71,12 @@ func importDatasource(filename string, cmd *datasourceCreateCmd) {
 
 		err := json.Unmarshal(byteValue, &datasource)
 		if err != nil {
-			fmt.Fprintln(cmd.out, err)
+			log.Println(err)
 		}
 
 		ds, err := cmd.client.CreateDatasource(datasource)
 		if err != nil {
-			fmt.Fprintln(cmd.out, err)
+			log.Println(err)
 		} else {
 			fmt.Fprintln(cmd.out, "Datasource \""+ds.Name+"\" created")
 		}

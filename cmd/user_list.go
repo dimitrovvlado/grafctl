@@ -16,6 +16,7 @@ type usersCmd struct {
 	out        io.Writer
 	output     string
 	currentOrg bool
+	ID         string
 }
 
 func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
@@ -29,12 +30,15 @@ func newUsersListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
 		Short:   "Display one or many users",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ensureClient(get.client)
+			if len(args) == 1 {
+				get.ID = args[0]
+			}
 			return get.run()
 		},
 	}
 	f := getUsersCmd.Flags()
 	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
-	getUsersCmd.PersistentFlags().BoolVarP(&get.currentOrg, "current-org", "c", false, "Display users in current organization only")
+	getUsersCmd.Flags().BoolVarP(&get.currentOrg, "current-org", "c", false, "Display users in current organization only")
 	return getUsersCmd
 }
 
