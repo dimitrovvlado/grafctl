@@ -18,15 +18,17 @@ var (
 	//ErrForbidden error
 	ErrForbidden = newError(403, "Access refused or not allowed")
 	//ErrNotFound error
-	ErrNotFound = newError(404, "Access refused or not allowed")
+	ErrNotFound = newError(404, "Resource not found")
 	//ErrTooManyRequests error
 	ErrTooManyRequests = newError(429, "You have exceeded the API call rate limit")
 	//ErrNotImplemented error
-	ErrNotImplemented = newError(501, "Not Implemented")
+	ErrNotImplemented = newError(501, "Not implemented")
 	//ErrBadGateway error
-	ErrBadGateway = newError(502, "Bad Gateway")
+	ErrBadGateway = newError(502, "Bad gateway")
 	//ErrServiceUnavailable error
-	ErrServiceUnavailable = newError(503, "Service Unavailable")
+	ErrServiceUnavailable = newError(503, "Service unavailable")
+	//ErrGatewayTimeout error
+	ErrGatewayTimeout = newError(504, "Gateway timeout")
 )
 
 //Error struct for http errors comming from grafana
@@ -156,6 +158,8 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		case http.StatusBadGateway: // 502
 			return nil, ErrBadGateway
 		case http.StatusServiceUnavailable: // 503
+			return nil, ErrServiceUnavailable
+		case http.StatusGatewayTimeout: // 504
 			return nil, ErrServiceUnavailable
 		}
 

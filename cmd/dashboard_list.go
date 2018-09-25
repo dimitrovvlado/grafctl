@@ -12,11 +12,11 @@ import (
 )
 
 type dashboardListCmd struct {
-	// ListDashboards
 	client *grafana.Client
 	out    io.Writer
 	uuid   string
 	output string
+	raw    bool
 }
 
 func newDashboardListCommand(client *grafana.Client, out io.Writer) *cobra.Command {
@@ -38,6 +38,7 @@ func newDashboardListCommand(client *grafana.Client, out io.Writer) *cobra.Comma
 	}
 	f := getDashboardsCmd.Flags()
 	f.StringVarP(&get.output, "output", "o", "", "Output the specified format (|json)")
+	f.BoolVarP(&get.raw, "raw", "r", true, "Displays the dashoard content only, valid when output is of type json")
 	return getDashboardsCmd
 }
 
@@ -61,7 +62,11 @@ func (i *dashboardListCmd) run() error {
 			table.AddRow(ex.Meta.Slug, ex.Meta.Version, ex.Meta.FolderTitle, ex.Meta.URL)
 			return fmt.Sprintf("%s\n", table.String())
 		}
-		obj = ex.Dashboard
+		if i.raw {
+			obj = ex.Dashboard
+		} else {
+			obj = ex
+		}
 	} else {
 		obj, err := i.client.ListDashboards()
 		if err != nil {

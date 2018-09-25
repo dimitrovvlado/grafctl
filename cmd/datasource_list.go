@@ -46,7 +46,7 @@ func (i *datasourceListCmd) run() error {
 	var colWidth uint = 60
 	formatter := func() string {
 		if ds == nil || len(ds) == 0 {
-			return fmt.Sprintf("No datasources found.")
+			return fmt.Sprintf("No datasources found")
 		}
 		table := uitable.New()
 		table.MaxColWidth = colWidth

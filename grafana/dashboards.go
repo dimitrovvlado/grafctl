@@ -71,3 +71,20 @@ func (c *Client) CreateDashboard(db DashboardRequest) (DashboardResponse, error)
 
 	return dr, nil
 }
+
+//DeleteDashboard deletes a dashboard by uid
+func (c *Client) DeleteDashboard(uid string) (string, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodDelete,
+		endpoint: fmt.Sprintf("%s/%s", DashboardsUIDEndpoint, uid),
+	})
+	if err != nil {
+		return "", err
+	}
+	var m map[string]interface{}
+	if err := decodeResponse(resp, &m); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return "", fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+	return m["title"].(string), nil
+}
