@@ -35,6 +35,23 @@ func (c *Client) ListDashboards() ([]Dashboard, error) {
 	return dashboards, nil
 }
 
+// GetDashboard returns a byte array representation of the dashboard
+func (c *Client) GetDashboard(uid string) (DashboardExport, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: fmt.Sprintf("%s/%s", DashboardsUIDEndpoint, uid),
+	})
+	if err != nil {
+		return DashboardExport{}, err
+	}
+	var de DashboardExport
+	if err := decodeResponse(resp, &de); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return DashboardExport{}, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+	return de, nil
+}
+
 // CreateDashboard creates a dashboard.
 func (c *Client) CreateDashboard(db DashboardRequest) (DashboardResponse, error) {
 	resp, err := c.doRequest(&request{

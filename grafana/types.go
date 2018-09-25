@@ -110,3 +110,26 @@ type DashboardResponse struct {
 	Path             string `json:"path,omitempty"`
 	Removed          bool   `json:"removed,omitempty"`
 }
+
+//DashboardExport struct
+type DashboardExport struct {
+	Meta      DashboardMetadata `json:"meta,omitempty"`
+	Dashboard interface{}       `json:"dashboard,omitempty"`
+}
+
+//DashboardMetadata defines data struct for the metadata when exporting a dashboard
+type DashboardMetadata struct {
+	Type        string `json:"type,omitempty"`
+	CanSave     bool   `json:"canSave,omitempty"`
+	CanEdit     bool   `json:"canEdit,omitempty"`
+	CanAdmin    bool   `json:"canAdmin,omitempty"`
+	CanStar     bool   `json:"canStar,omitempty"`
+	Slug        string `json:"slug,omitempty"`
+	URL         string `json:"url,omitempty"`
+	UpdatedBy   string `json:"updatedBy,omitempty"`
+	CreatedBy   string `json:"createdBy,omitempty"`
+	Version     int    `json:"version,omitempty"`
+	HasACL      bool   `json:"hasAcl,omitempty"`
+	FolderID    int    `json:"folderId,omitempty"`
+	FolderTitle string `json:"folderTitle,omitempty"`
+}

@@ -27,4 +27,7 @@ const (
 
 	//DashboardsImportEndpoint is the API endpoint for create/update of dashboards
 	DashboardsImportEndpoint = "/api/dashboards/import"
+
+	//DashboardsUIDEndpoint is the API endpoint for create/update of dashboards
+	DashboardsUIDEndpoint = "/api/dashboards/uid"
 )
