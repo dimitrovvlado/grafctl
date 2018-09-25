@@ -4,6 +4,27 @@
 
 Command-line utility for managing Grafana
 
+## Installation
+
+### Linux
+
+```sh
+curl -L https://github.com/dimitrovvlado/grafctl/releases/download/$(curl -s https://raw.githubusercontent.com/dimitrovvlado/grafctl/master/VERSION.txt)/grafctl-linux-amd64 -o /usr/local/bin/grafctl && chmod +x /usr/local/bin/grafctl
+```
+
+### MacOS
+
+```sh
+curl -L https://github.com/dimitrovvlado/grafctl/releases/download/$(curl -s https://raw.githubusercontent.com/dimitrovvlado/grafctl/master/VERSION.txt)/grafctl-darwin-amd64 -o /usr/local/bin/grafctl && chmod +x /usr/local/bin/grafctl
+```
+
+## Features
+
+* Written in portable go, binary is free of dependencies
+* Import/export of dashboards
+* Create/Read/Delete datasources
+* Read orgs, teams, users
+
 ## Usage
 
 ```
