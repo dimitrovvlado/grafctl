@@ -38,11 +38,9 @@ func (c *Client) ListUsers(opt *ListUserOptions) ([]User, error) {
 
 // GetUser returns a user by id
 func (c *Client) GetUser(ID string) (User, error) {
-	endpoint := UsersEndpoint
-
 	resp, err := c.doRequest(&request{
 		method:   http.MethodGet,
-		endpoint: endpoint,
+		endpoint: fmt.Sprintf("%s/%s", UsersEndpoint, ID),
 	})
 	if err != nil {
 		return User{}, err

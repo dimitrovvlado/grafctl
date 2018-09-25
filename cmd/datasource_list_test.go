@@ -26,7 +26,7 @@ func TestListEmptyDatasourcePlain(t *testing.T) {
 	var buf bytes.Buffer
 	cmd := newDatasourceListCommand(client, &buf)
 	cmd.RunE(cmd, []string{})
-	require.Equal(t, "No datasources found.", strings.TrimSpace(buf.String()))
+	require.Equal(t, "No datasources found", strings.TrimSpace(buf.String()))
 }
 
 func TestListEmptyDatasourceJson(t *testing.T) {

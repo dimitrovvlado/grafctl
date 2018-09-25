@@ -26,7 +26,7 @@ func TestListEmptyUsersPlain(t *testing.T) {
 	var buf bytes.Buffer
 	cmd := newUsersListCommand(client, &buf)
 	cmd.RunE(cmd, []string{})
-	require.Equal(t, "No users found.", strings.TrimSpace(buf.String()))
+	require.Equal(t, "No users found", strings.TrimSpace(buf.String()))
 }
 
 func TestListEmptyUsersJson(t *testing.T) {
@@ -43,7 +43,7 @@ func TestListEmptyUsersJson(t *testing.T) {
 	flags := []string{"--output", "json"}
 	cmd := newUsersListCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 	require.Equal(t, "[]", strings.TrimSpace(buf.String()))
 }
 
@@ -62,7 +62,7 @@ func TestListUsersJson(t *testing.T) {
 	flags := []string{"--output", "json"}
 	cmd := newUsersListCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 
 	var localJSON interface{}
 	json.Unmarshal(userBytes, &localJSON)

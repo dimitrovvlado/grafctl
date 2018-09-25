@@ -41,6 +41,6 @@ func TestListEmptyOrgsJson(t *testing.T) {
 	flags := []string{"--output", "json"}
 	cmd := newOrgListCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 	require.Equal(t, "[]", strings.TrimSpace(buf.String()))
 }
