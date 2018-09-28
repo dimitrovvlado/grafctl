@@ -9,7 +9,7 @@ import (
 func (c *Client) SearchTeams(opt *SearchTeamsOptions) (TeamPage, error) {
 	resp, err := c.doRequest(&request{
 		method:   http.MethodGet,
-		endpoint: TeamsEndpoint,
+		endpoint: TeamsSearchEndpoint,
 		query: map[string]string{
 			"query": opt.Query,
 		},
@@ -26,4 +26,24 @@ func (c *Client) SearchTeams(opt *SearchTeamsOptions) (TeamPage, error) {
 	}
 
 	return teamPage, nil
+}
+
+//CreateTeam creates a team
+func (c *Client) CreateTeam(team Team) (int, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodPost,
+		endpoint: TeamsEndpoint,
+		data:     team,
+	})
+	if err != nil {
+		return -1, err
+	}
+
+	// Decode the response into a TeamPage response object.
+	var teamResponse map[string]interface{}
+	if err := decodeResponse(resp, &teamResponse); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return -1, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+	return int(teamResponse["teamId"].(float64)), nil
 }

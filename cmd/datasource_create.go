@@ -37,8 +37,8 @@ func newDatasourceCreateCommand(client *grafana.Client, out io.Writer) *cobra.Co
 		},
 	}
 
-	i.files = createDatasourcesCmd.PersistentFlags().StringSliceP("filename", "f", []string{}, "Filename(s) or direcory to use to create the datasource")
-	createDatasourcesCmd.MarkPersistentFlagRequired("filename")
+	i.files = createDatasourcesCmd.Flags().StringSliceP("filename", "f", []string{}, "Filename(s) or direcory to use to create the datasource")
+	createDatasourcesCmd.MarkFlagRequired("filename")
 	return createDatasourcesCmd
 }
 
@@ -76,7 +76,12 @@ func importDatasource(filename string, cmd *datasourceCreateCmd) {
 
 		ds, err := cmd.client.CreateDatasource(datasource)
 		if err != nil {
-			log.Println(err)
+			switch err {
+			case grafana.ErrConflict:
+				log.Printf("Datasource \"%s\" already exists", datasource.Name)
+			default:
+				log.Println(err)
+			}
 		} else {
 			fmt.Fprintln(cmd.out, "Datasource \""+ds.Name+"\" created")
 		}

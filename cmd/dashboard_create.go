@@ -43,15 +43,6 @@ func newDashboardCreateCommand(client *grafana.Client, out io.Writer) *cobra.Com
 }
 
 func (i *dashboardCreateCmd) run() error {
-	// dbs, err := i.client.ListDashboards()
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// slugs := make(map[string]int)
-	// for _, db := range dbs {
-	// 	slugs[db.URI[3:]] = db.ID
-	// }
-
 	for _, file := range *i.files {
 		importDаshboard(file, i)
 	}

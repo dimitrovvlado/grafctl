@@ -15,7 +15,7 @@ func TestListEmptyTeamPlain(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "emptyTeams.json")
 	client := mockClient([]requestCase{
 		{
-			requestURI: grafana.TeamsEndpoint + "?query=",
+			requestURI: grafana.TeamsSearchEndpoint + "?query=",
 			handler: func(w http.ResponseWriter) {
 				w.Write(teamBytes)
 			},
@@ -32,7 +32,7 @@ func TestListEmptyTeamJson(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "emptyTeams.json")
 	client := mockClient([]requestCase{
 		{
-			requestURI: grafana.TeamsEndpoint + "?query=",
+			requestURI: grafana.TeamsSearchEndpoint + "?query=",
 			handler: func(w http.ResponseWriter) {
 				w.Write(teamBytes)
 			},
@@ -50,7 +50,7 @@ func TestListTeamsPlain(t *testing.T) {
 	teamBytes := helperLoadBytes(t, "teams.json")
 	client := mockClient([]requestCase{
 		{
-			requestURI: grafana.TeamsEndpoint + "?query=",
+			requestURI: grafana.TeamsSearchEndpoint + "?query=",
 			handler: func(w http.ResponseWriter) {
 				w.Write(teamBytes)
 			},

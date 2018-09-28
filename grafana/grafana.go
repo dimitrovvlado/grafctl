@@ -19,6 +19,8 @@ var (
 	ErrForbidden = newError(403, "Access refused or not allowed")
 	//ErrNotFound error
 	ErrNotFound = newError(404, "Resource not found")
+	//ErrConflict error
+	ErrConflict = newError(409, "Conflict")
 	//ErrTooManyRequests error
 	ErrTooManyRequests = newError(429, "You have exceeded the API call rate limit")
 	//ErrNotImplemented error
@@ -149,6 +151,8 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 			return nil, ErrForbidden
 		case http.StatusNotFound: // 404
 			return nil, ErrNotFound
+		case http.StatusConflict:
+			return nil, ErrConflict
 		case http.StatusTooManyRequests: // 429
 			return nil, ErrTooManyRequests
 		case http.StatusInternalServerError: // 500

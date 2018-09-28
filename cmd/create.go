@@ -24,6 +24,7 @@ func newCreateCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 
 	createCmd.AddCommand(newDatasourceCreateCommand(client, out))
 	createCmd.AddCommand(newDashboardCreateCommand(client, out))
+	createCmd.AddCommand(newTeamCreateCommand(client, out))
 
 	return createCmd
 }

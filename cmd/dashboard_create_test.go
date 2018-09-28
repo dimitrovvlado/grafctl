@@ -24,7 +24,7 @@ func TestCreateDashboard(t *testing.T) {
 	flags := []string{"-f", "testdata/dashboard.json"}
 	cmd := newDashboardCreateCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 
 	require.Equal(t, "Dashboard \"UI\" imported\n", buf.String())
 }

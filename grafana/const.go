@@ -19,8 +19,11 @@ const (
 	// DatasourcesEndpoint is the API endoint for datasources.
 	DatasourcesEndpoint = "/api/datasources"
 
-	// TeamsEndpoint is the API endpoint for Teams
-	TeamsEndpoint = "/api/teams/search"
+	// TeamsSearchEndpoint is the API endpoint for searching Teams
+	TeamsSearchEndpoint = "/api/teams/search"
+
+	// TeamsEndpoint is the API endpoint for searching Teams
+	TeamsEndpoint = "/api/teams"
 
 	//SearchEndpoint is the API endpoint for searching
 	SearchEndpoint = "/api/search"
