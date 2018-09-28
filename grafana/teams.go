@@ -5,6 +5,26 @@ import (
 	"net/http"
 )
 
+//GetTeam returns a team by ID
+func (c *Client) GetTeam(teamID string) (Team, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodGet,
+		endpoint: fmt.Sprintf("%s/%s", TeamsEndpoint, teamID),
+	})
+	if err != nil {
+		return Team{}, err
+	}
+
+	// Decode the response into a TeamPage response object.
+	var team Team
+	if err := decodeResponse(resp, &team); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return Team{}, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return team, nil
+}
+
 //SearchTeams returns a list of teams
 func (c *Client) SearchTeams(opt *SearchTeamsOptions) (TeamPage, error) {
 	resp, err := c.doRequest(&request{
@@ -46,4 +66,14 @@ func (c *Client) CreateTeam(team Team) (int, error) {
 		return -1, fmt.Errorf("decoding response from request to failed, err -> %v", err)
 	}
 	return int(teamResponse["teamId"].(float64)), nil
+}
+
+// DeleteTeam deletes a team
+func (c *Client) DeleteTeam(team Team) error {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodDelete,
+		endpoint: fmt.Sprintf("%s/%d", TeamsEndpoint, team.ID),
+	})
+	defer resp.Body.Close()
+	return err
 }

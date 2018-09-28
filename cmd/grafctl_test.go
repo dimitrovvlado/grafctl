@@ -11,6 +11,7 @@ import (
 )
 
 type requestCase struct {
+	method     string
 	requestURI string
 	handler    func(w http.ResponseWriter)
 }
@@ -19,7 +20,11 @@ func mockClient(cases []requestCase) *grafana.Client {
 	var apiStub = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for _, req := range cases {
 			if req.requestURI == r.RequestURI {
-				req.handler(w)
+				if req.method != "" && req.method == r.Method {
+					req.handler(w)
+				} else {
+					req.handler(w)
+				}
 			}
 		}
 	}))
