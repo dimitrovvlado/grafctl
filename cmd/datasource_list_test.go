@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -43,7 +44,7 @@ func TestListEmptyDatasourceJson(t *testing.T) {
 	flags := []string{"--output", "json"}
 	cmd := newDatasourceListCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 	require.Equal(t, "[]", strings.TrimSpace(buf.String()))
 }
 
@@ -62,7 +63,7 @@ func TestListDatasourcesJson(t *testing.T) {
 	flags := []string{"--output", "json"}
 	cmd := newDatasourceListCommand(client, &buf)
 	cmd.ParseFlags(flags)
-	cmd.RunE(cmd, flags)
+	cmd.RunE(cmd, []string{})
 
 	var localJSON interface{}
 	json.Unmarshal(dsBytes, &localJSON)
@@ -89,4 +90,21 @@ func TestListDatasourcesPlain(t *testing.T) {
 	cmd.RunE(cmd, []string{})
 
 	require.Contains(t, buf.String(), "1 	Prometheus	prometheus	proxy 	http://prometheus-server")
+}
+
+func TestGetDatasourceById(t *testing.T) {
+	dsBytes := helperLoadBytes(t, "datasource.json")
+	client := mockClient([]requestCase{
+		{
+			requestURI: fmt.Sprintf("%s/%s", grafana.DatasourcesEndpoint, "1"),
+			handler: func(w http.ResponseWriter) {
+				w.Write(dsBytes)
+			},
+		},
+	})
+
+	var buf bytes.Buffer
+	cmd := newDatasourceListCommand(client, &buf)
+	cmd.RunE(cmd, []string{"1"})
+	require.Contains(t, strings.TrimSpace(buf.String()), "1 	Prometheus	prometheus	proxy 	http://prometheus-server")
 }

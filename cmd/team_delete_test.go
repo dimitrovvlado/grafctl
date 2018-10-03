@@ -52,7 +52,6 @@ func TestDeleteNotExistingTeam(t *testing.T) {
 	log.SetOutput(&buf)
 	cmd := newTeamDeleteCommand(client, &buf)
 	cmd.RunE(cmd, []string{"3"})
-
 	require.Equal(t, "Team with ID \"3\" not found\n", buf.String())
 }
 
