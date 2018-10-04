@@ -33,4 +33,7 @@ const (
 
 	//DashboardsUIDEndpoint is the API endpoint for create/update of dashboards
 	DashboardsUIDEndpoint = "/api/dashboards/uid"
+
+	//FoldersEndpoint is the API endpoint for folders
+	FoldersEndpoint = "/api/folders"
 )

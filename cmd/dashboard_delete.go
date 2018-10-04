@@ -25,7 +25,7 @@ func newDashboardDeleteCommand(client *grafana.Client, out io.Writer) *cobra.Com
 	deleteDashboardCmd := &cobra.Command{
 		Use:     "dashboard",
 		Aliases: []string{"db", "dbs", "dashboards"},
-		Short:   "Delete dashboard by uuid",
+		Short:   "Delete dashboard by UID",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ensureClient(del.client)
 			if len(args) == 0 {

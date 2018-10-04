@@ -25,5 +25,6 @@ func newDeletCmd(client *grafana.Client, out io.Writer) *cobra.Command {
 	deleteCmd.AddCommand(newDatasourceDeleteCommand(client, out))
 	deleteCmd.AddCommand(newDashboardDeleteCommand(client, out))
 	deleteCmd.AddCommand(newTeamDeleteCommand(client, out))
+	deleteCmd.AddCommand(newFolderDeleteCmd(client, out))
 	return deleteCmd
 }

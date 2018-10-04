@@ -133,3 +133,18 @@ type DashboardMetadata struct {
 	FolderID    int    `json:"folderId,omitempty"`
 	FolderTitle string `json:"folderTitle,omitempty"`
 }
+
+//Folder defines data struct for folders.
+type Folder struct {
+	ID        int    `json:"id,omitempty"`
+	UID       string `json:"uid,omitempty"`
+	Title     string `json:"title,omitempty"`
+	URL       string `json:"url,omitempty"`
+	HasACL    bool   `json:"hasAcl,omitempty"`
+	CanSave   bool   `json:"canSave,omitempty"`
+	CanEdit   bool   `json:"canEdit,omitempty"`
+	CanAdmin  bool   `json:"canAdmin,omitempty"`
+	CreatedBy string `json:"createdBy,omitempty"`
+	UpdatedBy string `json:"updatedBy,omitempty"`
+	Version   int    `json:"version,omitempty"`
+}

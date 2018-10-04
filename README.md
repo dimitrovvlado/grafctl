@@ -22,8 +22,7 @@ curl -L https://github.com/dimitrovvlado/grafctl/releases/download/$(curl -s htt
 
 * Written in portable go, binary is free of dependencies
 * Import/export of dashboards
-* Create/Read/Delete datasources
-* Read orgs, teams, users
+* Create/read/delete datasources, folders, users, organizations, teams
 
 ## Usage
 
