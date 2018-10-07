@@ -60,3 +60,24 @@ func (c *Client) DeleteFolder(folder Folder) error {
 	defer resp.Body.Close()
 	return err
 }
+
+//CreateFolder creates a single folder
+func (c *Client) CreateFolder(folder Folder) (Folder, error) {
+	resp, err := c.doRequest(&request{
+		method:   http.MethodPost,
+		endpoint: FoldersEndpoint,
+		data:     folder,
+	})
+
+	var res Folder
+	if err != nil {
+		return res, err
+	}
+
+	if err := decodeResponse(resp, &res); err != nil {
+		// Read the body of the request, ignore the error since we are already in the error state.
+		return res, fmt.Errorf("decoding response from request to failed, err -> %v", err)
+	}
+
+	return res, nil
+}

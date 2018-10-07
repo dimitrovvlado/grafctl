@@ -51,9 +51,7 @@ func (i *deleteFolderCmd) run() error {
 			log.Println(err)
 		}
 	} else {
-		fmt.Println("Deleting folder")
 		err = i.client.DeleteFolder(folder)
-		fmt.Println("Deleted folder")
 		if err != nil {
 			return err
 		}

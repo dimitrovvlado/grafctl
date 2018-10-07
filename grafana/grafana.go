@@ -137,7 +137,7 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 	}
 
 	// Check that the response status code was OK.
-	if resp.StatusCode > 400 {
+	if resp.StatusCode >= 400 {
 		// Read the body of the request, ignore the error since we are already in the error state.
 		body, _ := ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
@@ -145,6 +145,8 @@ func (c *Client) doRequest(req *request) (*http.Response, error) {
 		// Create a friendly error message based off the status code returned.
 		var message string
 		switch resp.StatusCode {
+		case http.StatusBadRequest: //400
+			return nil, decodeError(resp, body)
 		case http.StatusUnauthorized: // 401
 			return nil, ErrUnauthorized
 		case http.StatusForbidden: // 403
