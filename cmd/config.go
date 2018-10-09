@@ -60,10 +60,6 @@ func (i *configCmd) run() error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(i.home.ConfigFile(), j, 0755); err != nil {
-		return err
-	}
-
 	return nil
 }
 
