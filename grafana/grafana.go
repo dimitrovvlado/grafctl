@@ -33,7 +33,7 @@ var (
 	ErrGatewayTimeout = newError(504, "Gateway timeout")
 )
 
-//Error struct for http errors comming from grafana
+//Error struct for http errors coming from grafana
 type Error struct {
 	StatusCode int
 	Message    string
