@@ -91,7 +91,7 @@ func importTeam(filename string, cmd *teamCreateCmd) {
 			}
 		}
 	} else {
-		//Ignoring the error because we check for file existance upfront
+		//Ignoring the error because we check for file existence upfront
 		data, _ := ioutil.ReadFile(filename)
 
 		var team grafana.Team
