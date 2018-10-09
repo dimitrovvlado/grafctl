@@ -82,7 +82,7 @@ func importFolder(filename string, cmd *folderCreateCmd) {
 			}
 		}
 	} else {
-		//Ignoring the error because we check for file existance upfront
+		//Ignoring the error because we check for file existence upfront
 		data, _ := ioutil.ReadFile(filename)
 
 		var folder grafana.Folder
